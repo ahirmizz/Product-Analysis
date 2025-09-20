@@ -11,3 +11,7 @@ def clean_data(file_path: str) -> pd.DataFrame:
     df = df[new_order]
     df = df[df['verified_purchase'] != False]
     return df
+
+
+cleaned = clean_data('Data_Cleaning/All_Beauty.jsonl')
+print(cleaned.head())
