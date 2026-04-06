@@ -1,0 +1,6 @@
+pandas
+numpy
+praw
+openai
+anthropic
+matplotlib

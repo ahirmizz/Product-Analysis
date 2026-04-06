@@ -1,21 +1,27 @@
 from openai import OpenAI
-import json
-from datetime import datetime
 import pandas as pd
 from typing import List, Dict, Optional
-import time
 from pydantic import BaseModel
 
 
-
 class AIModelAnalyzer:
+    """
+    Handles sentiment analysis for Apple product reviews.
+    Loads review, data, sends it to OpenAI models, and parses the results.
+    """
+
     def __init__(self, api_key: str, rate_limit_delay: float = 1.0):
+        # Initializes OpenAI client
         if not api_key:
             raise RuntimeError("OpenAI API key is required. Set OPENAI_API_KEY or pass --api-key")
         self.client = OpenAI(api_key=api_key)
         self.rate_limit_delay = rate_limit_delay
 
     def load_reviews_from_csv(self, csv_path: str, product_name: str = None) -> List[Dict]:
+        """
+        Loads Apple product reviews from a CSV file into a list of dictionaries.
+        Each review includes product_name, title, and review_text.
+        """
         try:
             df = pd.read_csv(csv_path)
             
@@ -42,11 +48,16 @@ class AIModelAnalyzer:
             return []
 
     def analyze_reviews(self, reviews: List[Dict], save_path: Optional[str] = None) -> Dict:
+        """
+        Performs multi-dimensional sentiment analysis on a list of reviews.
+        Uses AI to score general sentiment and feature attributes from 1 to 10.
+        Returns parsed results as a structured dictionary.
+        """
         if not reviews:
             raise ValueError("No reviews provided to analyze")
 
         prompt_text = (
-            f'''
+            f"""
 			You are an assistant that analyzes product reviews. Analyze this dataframe of review {reviews}.
 			Do a a general postive or negative analysis, 1-10 and a specifice analysis to evaluate any features that are talked about in each review then give the feature a score of 1-10.
             
@@ -65,12 +76,11 @@ class AIModelAnalyzer:
 			2. **User Interface** - How does the review describe the ease of use, software, navigation, or user experience?
 			3. **Aesthetic** - Does the review comment on appearance, design, look, style, or visual appeal?
 			4. **Material** - Does the review discuss build quality, materials used, durability, or construction?
-			5. **Price** - Does the review mention value for money, cost, pricing, affordability, or whether it's worth the price?
-					
-            '''
+			5. **Price** - Does the review mention value for money, cost, pricing, affordability, or whether it's worth the price?	
+            """
         )
 
-        # Call the OpenAI Responses API
+        # Calls OpenAI API to analyze reviews
         try:
             response = self.client.responses.parse(
     			model="gpt-5-nano-2025-08-07",
@@ -79,7 +89,8 @@ class AIModelAnalyzer:
     			],
     		text_format=Summary,
 			)
-                        
+
+            # Parses the output into structured data            
             try:
                 result_text = response.output_parsed
             except Exception:
@@ -93,7 +104,8 @@ class AIModelAnalyzer:
             traceback.print_exc()
             return {"error": str(e)}
         
-        
+
+# Pydantic models to validate and structure analysis results
 class Feature(BaseModel):
     feature: str
     score: int
@@ -103,4 +115,3 @@ class Summary(BaseModel):
     product_name: str
     general_analysis: str
     results: list[Feature]
-

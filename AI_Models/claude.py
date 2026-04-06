@@ -6,7 +6,14 @@ from typing import List, Dict, Optional
 import time
 
 class ProductReviewAttributeAnalyzer:
+    """
+    Analyzes Apple product reviews using Claude API.
+    Loads reviews, analyzes specific product features, generates reports, and saves results.
+    """
+
+
     def __init__(self, claude_api_key: str):
+        # Claude API client and rate-limiting delay
         self.claude_client = anthropic.Anthropic(api_key=claude_api_key)
         self.rate_limit_delay = 1  # seconds between API calls
         
@@ -31,7 +38,7 @@ class ProductReviewAttributeAnalyzer:
                 review = {
                     'review_id': str(row.get('post_id', '')),
                     'product_name': product_name if product_name else 'Apple Watch Series 7',
-                    'rating': None,  # Reddit posts don't have star ratings
+                    'rating': None,                                                             # Reddit posts do not have star ratings
                     'title': str(row.get('title', '')),
                     'review_text': str(row.get('review_text', '')),
                     'reviewer_name': str(row.get('subreddit', 'Reddit User')),
@@ -61,7 +68,7 @@ class ProductReviewAttributeAnalyzer:
     
     def analyze_product_attributes(self, review_data: Dict, product_name: str) -> Dict:
         """
-        Analyze how the review discusses product attributes across 8 factors
+        Analyze a single review for eight product attributes using Claude API
         """
         # Combine review text components
         text_parts = []
@@ -76,6 +83,7 @@ class ProductReviewAttributeAnalyzer:
         
         full_text = '\n\n'.join(text_parts)
         
+        # Return neutral scores if review is too short
         if len(full_text.strip()) < 20:
             return {
                 'product': product_name,
@@ -91,6 +99,7 @@ class ProductReviewAttributeAnalyzer:
                 'error': 'Insufficient content for analysis'
             }
         
+        # Construct prompt for Claude API
         prompt = f"""You are a helpful assistant that analyzes product reviews and returns results in JSON format. You specialize in evaluating specific product attributes mentioned in reviews.
 
                 Analyze this csv of review about {product_name}, only consider the in the review_text column for your analysis, then provide ONLY a JSON response with scores for how the review discusses these eight product attributes:
@@ -134,8 +143,7 @@ Date: {review_data.get('review_date', '')}
 Respond ONLY with the JSON object, no additional text."""
 
         try:
-            #time.sleep(self.rate_limit_delay)  Rate limiting
-            
+            # Send request to Claude
             response = self.claude_client.messages.create(
                 model="claude-sonnet-4-5-20250929",
                 max_tokens=1000,
@@ -145,7 +153,6 @@ Respond ONLY with the JSON object, no additional text."""
                     "content": prompt
                 }]
             )
-            
             response_text = response.content[0].text
             
             # Extract JSON from response
@@ -158,7 +165,7 @@ Respond ONLY with the JSON object, no additional text."""
                 else:
                     analysis_data = json.loads(response_text)
                 
-                # Validate required fields and ensure they're in the correct range
+                # Validate fields
                 required_fields = ['product', 'review_id', 'battery_life', 'customer_service', 'user_interface', 'aesthetic', 'processor_speed', 'material', 'price', 'longevity_reliability']
                 for field in required_fields:
                     if field not in analysis_data:
@@ -169,7 +176,7 @@ Respond ONLY with the JSON object, no additional text."""
                         else:
                             analysis_data[field] = 5  # Default neutral score
                 
-                # Ensure scores are within 1-10 range
+                # Ensures scores are within 1-10 range
                 score_fields = ['battery_life', 'customer_service', 'user_interface', 'aesthetic', 'processor_speed', 'material', 'price', 'longevity_reliability']
                 for field in score_fields:
                     if not isinstance(analysis_data[field], (int, float)) or analysis_data[field] < 1 or analysis_data[field] > 10:
@@ -184,10 +191,9 @@ Respond ONLY with the JSON object, no additional text."""
                 
         except Exception as e:
             print(f"Error calling Claude API: {e}")
-            #return self._fallback_analysis(review_data.get('review_id', ''), product_name)
     
     def _fallback_analysis(self, review_id: str, product_name: str) -> Dict:
-        """Fallback when API fails - returns neutral scores"""
+        """Fallback: returns neutral scores when API fails"""
         return {
             'product': product_name,
             'review_id': review_id,
@@ -203,7 +209,7 @@ Respond ONLY with the JSON object, no additional text."""
         }
     
     def analyze_reviews_batch(self, reviews: List[Dict], product_name: str = None) -> List[Dict]:
-        """Analyze product attributes for a batch of reviews"""
+        """Analyzes a batch of reviews and returns structured results"""
         results = []
         
         # Determine product name from reviews if not provided
@@ -237,15 +243,11 @@ Respond ONLY with the JSON object, no additional text."""
             }
             
             results.append(result)
-            
-            # Rate limiting
-            #if i < len(reviews) - 1:
-                #time.sleep(0.5)
         
         return results
     
     def generate_comprehensive_report(self, results: List[Dict], product_name: str = None) -> Dict:
-        """Generate detailed product attribute analysis report"""
+        """Creates a report summarizing attribute-level analysis across reviews"""
         if not results:
             return {
                 'summary': {'total_reviews': 0, 'error': 'No reviews to analyze'},
@@ -399,7 +401,7 @@ Respond ONLY with the JSON object, no additional text."""
             return ""
     
     def print_summary_stats(self, report: Dict):
-        """Print formatted summary statistics"""
+        """Print a formatted summary of attribute scores and review counts"""
         print("\n" + "="*60)
         print(f"PRODUCT ATTRIBUTE ANALYSIS SUMMARY")
         print("="*60)
