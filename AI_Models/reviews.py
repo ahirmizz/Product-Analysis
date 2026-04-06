@@ -1,4 +1,6 @@
 import re
+import os
+from dotenv import load_dotenv
 from datetime import datetime
 from typing import List, Dict, Optional
 
@@ -6,17 +8,18 @@ import pandas as pd
 import praw
 from pathlib import Path
 
+load_dotenv()
 
 class Reddit:
     def __init__(self):
-        # Reddit API credentials
-        self.client_id = "HXZPaigOHwekwXJnzrzcpg"
-        self.client_secret = "Lp_gNkS3REot4SpeYAQ7xqRm-6pZyw"
-        self.user_agent =  "reddit-sentiment/1.0"
+        # Load Reddit API credentials securely from environment variables
+        self.client_id = os.getenv("REDDIT_CLIENT_ID")
+        self.client_secret = os.getenv("REDDIT_CLIENT_SECRET")
+        self.user_agent =  os.getenv("REDDIT_USER_AGENT", "reddit-sentiment/1.0")
 
         if not self.client_id or not self.client_secret:
             raise RuntimeError(
-                "Missing Reddit credentials. Set REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET."
+                "Missing Reddit credentials. Set REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET in .env"
             )
         
         # Initializes PRAW Reddit client
@@ -101,7 +104,7 @@ class Reddit:
                 "created_utc": datetime.fromtimestamp(getattr(post, "created_utc", 0)).strftime("%Y-%m-%d %H:%M:%S"),
                 "author": str(getattr(post, "author", "Reddit User")),
                 "tags": self.extract_tags(title, getattr(post, "link_flair_text", None)),
-                "review_texts": selftext
+                "review_text": selftext
             })
 
         # Saves to CSV

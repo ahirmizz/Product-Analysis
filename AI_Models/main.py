@@ -1,12 +1,10 @@
 from reviews import Reddit
-from analysis import AIModelAnalyzer
+from AI_Models.openai_analyzer import AIModelAnalyzer
 from visual import DataVisualizer
 from dotenv import load_dotenv
 import os
-from sentiment_analyzer import SentimentAnalyzer
 
-
-class SentimentAnalyzer:
+class SentimentPipeline:
     """
     Manages the end-to-end Apple product review sentiment analysis
 
@@ -42,5 +40,5 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
     
 if __name__ == "__main__":
-    analyzer = SentimentAnalyzer(api_key)
-    analyzer.run_analysis()
+    pipeline = SentimentPipeline(api_key)
+    pipeline.run_analysis()
