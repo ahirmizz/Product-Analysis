@@ -67,6 +67,8 @@ The system evaluates reviews across the following product attributes/features:
 │
 └── README.md
 
+```
+
 ---
 
 ## Setup and Installation
@@ -77,11 +79,15 @@ The system evaluates reviews across the following product attributes/features:
     pip install -r requirements.txt
 
 3. Configure Environment Variables:
+
    Create a .env file in the root directory
-   REDDIT_CLIENT_ID='your_id'
-   REDDIT_CLIENT_SECRET='your_secret'
-   OPENAI_API_KEY='your_openai_key'
-   ANTHROPIC_API_KEY='your_claude_key'
+     
+   ```bash
+   REDDIT_CLIENT_ID=your_id
+   REDDIT_CLIENT_SECRET=your_secret
+   OPENAI_API_KEY=your_openai_key
+   ANTHROPIC_API_KEY=your_claude_key
+   ```
 
 ---
 
@@ -106,10 +112,12 @@ The system evaluates reviews across the following product attributes/features:
 
 ## Use Case Example
 **Input:** "iPhone 14"
+
 **Process:** 
 - Scrapes Reddit posts related to user input (iPhone 14)
 - Sends posts to OpenAI for feature-based sentiment scoring
 - Aggregates results into structured analysis
+
 **Output:**
 - Dashboard shows strengths and weaknesses such as:
      - High: Processor Speed, Design
