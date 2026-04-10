@@ -43,27 +43,27 @@ The system evaluates reviews across the following product attributes/features:
 ---
 
 ## Project Structure
-
+.
 ├── AI_Models/
 │   ├── claude.py                # Claude-based product attribute analyzer (multi-feature review scoring + reporting)
 │   ├── openai_analyzer.py       # OpenAI-based sentiment + feature analysis pipeline using structured outputs
 │   ├── main.py                  # End-to-end sentiment pipeline orchestrator (Reddit → AI → Visualization)
 │   ├── reviews.py               # Reddit scraping module using PRAW (fetches and saves product discussions)
 │   ├── visual.py                # Tkinter + Matplotlib GUI for displaying analysis results
-│   ├── requirements.txt         # Python dependencies for AI models + analysis pipeline
+│   └── requirements.txt         # Python dependencies for AI models + analysis pipeline
 │
 ├── Data_Cleaning/
-│   ├── data_cleaning.py        # JSONL → CSV cleaning pipeline (deduplication, filtering, normalization)
-│   ├── requirements.txt        # Dependencies for data preprocessing stage
-│   ├── sub_dataset.jsonl       # Raw dataset sample (Reddit/web scraped data)
+│   ├── data_cleaning.py         # JSONL → CSV cleaning pipeline (deduplication, filtering, normalization)
+│   ├── requirements.txt         # Dependencies for data preprocessing stage
+│   └── sub_dataset.jsonl        # Raw dataset sample (Reddit/web scraped data)
 │
 ├── Sentiment_Analyzer/
-│   ├── reddit_<product>.csv    # Generated Reddit review datasets (output of scraping step)
+│   └── reddit_<product>.csv     # Generated Reddit review datasets (output of scraping step)
 │
 ├── web_scraping/
-│   ├── reddit_<product>.csv    # Raw scraped Reddit posts before analysis
+│   └── reddit_<product>.csv     # Raw scraped Reddit posts before analysis
 │
-├── README.md
+└── README.md
 
 ---
 
@@ -95,7 +95,7 @@ The system evaluates reviews across the following product attributes/features:
 - Returns structured output using Pydantic models
 
 3. **Visualization** (visual.py)
-The DataVisualizer class launches a Tkinter-based desktop window showing:
+- The DataVisualizer class launches a Tkinter-based desktop window showing:
 - A textual summary of the AI's findings
 - A horizontal bar chart comparing scores across all Apple product features
 
