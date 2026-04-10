@@ -43,6 +43,8 @@ The system evaluates reviews across the following product attributes/features:
 ---
 
 ## Project Structure
+
+```bash
 .
 ├── AI_Models/
 │   ├── claude.py                # Claude-based product attribute analyzer (multi-feature review scoring + reporting)
@@ -71,7 +73,8 @@ The system evaluates reviews across the following product attributes/features:
 1. Clone the repository
    
 2. Install dependencies:
-   pip install -r requirements.txt
+   ```bash
+    pip install -r requirements.txt
 
 3. Configure Environment Variables:
    Create a .env file in the root directory
