@@ -118,12 +118,12 @@ The system evaluates reviews across the following product attributes/features:
 - Sends posts to OpenAI for feature-based sentiment scoring
 - Aggregates results into structured analysis
 
+<img width="509" height="102" alt="Screenshot 2026-04-11 at 11 51 55 PM" src="https://github.com/user-attachments/assets/2d69f05d-8ce1-4e1b-9837-3a4d93967592" />
+
 **Output:**
 - Dashboard shows strengths and weaknesses such as:
      - High: Processor Speed, Design
      - Lower: Price, Battery Life
- 
-<img width="509" height="102" alt="Screenshot 2026-04-11 at 11 51 55 PM" src="https://github.com/user-attachments/assets/2d69f05d-8ce1-4e1b-9837-3a4d93967592" />
 
 <img width="1017" height="591" alt="Screenshot 2026-04-11 at 11 52 15 PM" src="https://github.com/user-attachments/assets/2da68121-b4ac-4a6d-a497-4f0cb202ac4d" />
 
